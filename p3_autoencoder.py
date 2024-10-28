@@ -17,8 +17,8 @@ encoding_dim = 64
 
 # Define encoder model
 input_img = Input(shape=(784,))
-encoded = Dense(256, activation='sigmoid')(input_img)
-encoded = Dense(128, activation='sigmoin')(encoded)
+encoded = Dense(256, activation='relu')(input_img)
+encoded = Dense(128, activation='relu')(encoded)
 encoded = Dense(encoding_dim, activation='relu')(encoded)
 
 # Define decoder model
