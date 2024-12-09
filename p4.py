@@ -37,12 +37,14 @@ cnn.compile(optimizer='adam',
             loss='categorical_crossentropy',
             metrics=['accuracy'])
 
+
+# Train the CNN on CIFAR-10
+history = cnn.fit(x_train, y_train, epochs=15, batch_size=64, validation_data=(x_test, y_test))
+
 # Evaluate on the test data
 test_loss, test_acc = cnn.evaluate(x_test, y_test)
 print(f"CIFAR-10 Test Accuracy: {test_acc:.2f}")
 
-# Train the CNN on CIFAR-10
-history = cnn.fit(x_train, y_train, epochs=15, batch_size=64, validation_data=(x_test, y_test))
 # Load CIFAR-100 dataset
 (x_train, y_train), (x_test, y_test) = tf.keras.datasets.cifar100.load_data()
 
