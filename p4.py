@@ -1,8 +1,7 @@
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout, BatchNormalization
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.optimizers import Adam
+#from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.datasets import cifar10, cifar100
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras import layers, models
@@ -88,7 +87,7 @@ y_test = tf.keras.utils.to_categorical(y_test, 100)
 model = build_cnn(x_train.shape[1:],100)
 # Compile the model
 model.compile(
-    optimizer=Adam(learning_rate=0.001),
+    optimizer='adam',
     loss='categorical_crossentropy',
     metrics=['accuracy']
 )
