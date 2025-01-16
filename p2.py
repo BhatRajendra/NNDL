@@ -1,54 +1,39 @@
 import numpy as np
-import matplotlib.pyplot as plt
-import tensorflow as tf
-from tensorflow.keras import layers, models
-from tensorflow.keras.datasets import mnist
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
 
-# Load the MNIST dataset
-(x_train, y_train), (x_test, y_test) = mnist.load_data()
+data = load_breast_cancer()
+X = data.data
+y = data.target
 
-# Preprocess the data
-x_train = x_train.reshape((60000, 28 * 28)).astype('float32') / 255
-x_test = x_test.reshape((10000, 28 * 28)).astype('float32') / 255
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Convert labels to one-hot encoding
-y_train = tf.keras.utils.to_categorical(y_train, 10)
-y_test = tf.keras.utils.to_categorical(y_test, 10)
+activation_function = 'sigmoid'
 
-# Build the model
-model = models.Sequential()
-model.add(layers.Dense(128, activation='relu', input_shape=(28 * 28,)))
-model.add(layers.Dense(64, activation='relu'))
-model.add(layers.Dense(10, activation='softmax'))
+model = Sequential()
+model.add(Dense(16, input_dim=X_train.shape[1], activation=activation_function))
+model.add(Dense(8, activation=activation_function))
+model.add(Dense(1, activation='sigmoid'))
 
-# Compile the model
-model.compile(optimizer='adam',
-loss='categorical_crossentropy',
-metrics=['accuracy'])
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
-# Train the model
-model.fit(x_train, y_train, epochs=5, batch_size=64, validation_split=0.2)
+model.fit(X_train, y_train, epochs=50, batch_size=16, verbose=1)
 
-# Evaluate the model
-test_loss, test_acc = model.evaluate(x_test, y_test)
-print('Test accuracy:', test_acc)
+loss, accuracy = model.evaluate(X_test, y_test, verbose=0)
+print(f"Test Accuracy: {accuracy:.2f}")
 
+sample_index = 52
+sample_data = X_test[sample_index].reshape(1, -1)
+predicted_prob = model.predict(sample_data)[0][0]
+predicted_class = int(predicted_prob > 0.5)
 
-# Display the image
-for i in range(10):
-    # Pick a random image from the test set
-    random_index = np.random.randint(0, x_test.shape[0])
-    random_image = x_test[random_index]
-    random_label = np.argmax(y_test[random_index]) # True label
+print(f"Predicted Probability: {predicted_prob:.2f}")
+if predicted_class == 1:
+    print("The model predicts: BENIGN (No Cancer)")
+else:
+    print("The model predicts: MALIGNANT (Cancer)")
 
-    # Reshape for prediction
-    random_image = random_image.reshape(1, 28 * 28)
-
-    # Make prediction
-    predictions = model.predict(random_image)
-    predicted_class = np.argmax(predictions)
-
-    plt.imshow(random_image.reshape(28, 28), cmap='gray')
-    plt.title(f'True label: {random_label}, Predicted: {predicted_class}')
-    plt.axis('off')
-    plt.show()
+print(f"True label: {'BENIGN' if y_test[sample_index] == 1 else 'MALIGNANT'}")
