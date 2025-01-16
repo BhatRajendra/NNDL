@@ -77,13 +77,13 @@ y_train = tf.keras.utils.to_categorical(y_train, 100)
 y_test = tf.keras.utils.to_categorical(y_test, 100)
 
 # Data Augmentation
-datagen = ImageDataGenerator(
-    rotation_range=15,
-    width_shift_range=0.1,
-    height_shift_range=0.1,
-    horizontal_flip=True
-)
-datagen.fit(x_train)
+# datagen = ImageDataGenerator(
+#     rotation_range=15,
+#     width_shift_range=0.1,
+#     height_shift_range=0.1,
+#     horizontal_flip=True
+# )
+# datagen.fit(x_train)
 
 model = build_cnn(x_train.shape[1:],100)
 # Compile the model
@@ -96,7 +96,10 @@ model.compile(
 batch_size = 64
 epochs = 20
 history = model.fit(
-    datagen.flow(x_train, y_train, batch_size=batch_size),
+    #datagen.flow(x_train, y_train, batch_size=batch_size),
+    x_train,
+    y_train,
+    batch_size=batch_size,
     steps_per_epoch=x_train.shape[0] // batch_size,
     validation_data=(x_test, y_test),
     epochs=epochs,
